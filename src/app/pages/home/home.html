@@ -1,0 +1,175 @@
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <img src="img/learner-studying-1280.webp"
+         srcset="img/learner-studying-640.webp 640w, img/learner-studying-1280.webp 1280w"
+         sizes="100vw" width="1280" height="720" alt="" fetchpriority="high" />
+  </div>
+  <div class="container hero-inner">
+    <span class="eyebrow">{{ hero.eyebrow }}</span>
+    <h1>
+      {{ hero.titleLead }}<br />
+      <span class="accent">{{ hero.titleAccent }}</span>
+    </h1>
+    <p class="hero-sub">{{ hero.subtitle }}</p>
+    <div class="hero-ctas">
+      <a routerLink="/diagnostic" class="btn btn-gold">
+        {{ hero.primaryCta }} <app-icon name="arrow" [size]="18" />
+      </a>
+      <a routerLink="/" fragment="pricing" class="btn btn-outline-light">{{ hero.secondaryCta }}</a>
+    </div>
+    <p class="hero-note">
+      <app-icon name="clock" [size]="16" /> Diagnostic opens {{ site.diagnosticOpens }} · free, no obligation
+    </p>
+  </div>
+  <div class="container">
+    <ul class="highlights">
+      @for (h of hero.highlights; track h.title) {
+        <li>
+          <span class="hl-icon"><app-icon [name]="h.icon" /></span>
+          <span><strong>{{ h.title }}</strong><small>{{ h.text }}</small></span>
+        </li>
+      }
+    </ul>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="section problem">
+  <div class="container two-col">
+    <div>
+      <span class="eyebrow">{{ problem.eyebrow }}</span>
+      <h2>{{ problem.title }}</h2>
+      <p class="lead">{{ problem.text }}</p>
+    </div>
+    <div class="card gap-card">
+      <h3>What the diagnostic checks</h3>
+      <ul class="checklist">
+        @for (p of problem.points; track p) {
+          <li><app-icon name="check" [size]="20" /> {{ p }}</li>
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section how" id="how-it-works">
+  <div class="container">
+    <span class="eyebrow">A simple process</span>
+    <h2>How it works</h2>
+    <ol class="steps">
+      @for (s of steps; track s.title; let i = $index) {
+        <li>
+          <span class="num">{{ i + 1 }}</span>
+          <h3>{{ s.title }}</h3>
+          <p>{{ s.text }}</p>
+        </li>
+      }
+    </ol>
+  </div>
+</section>
+
+<!-- SUBJECTS -->
+<section class="section subjects" id="subjects">
+  <div class="container">
+    <span class="eyebrow">Grade 12 CAPS</span>
+    <h2>Two subjects, taught properly</h2>
+    <div class="subject-grid">
+      @for (s of subjects; track s.name) {
+        <article class="subject">
+          <img [src]="'img/' + s.image + '-640.webp'"
+               [attr.srcset]="'img/' + s.image + '-640.webp 640w, img/' + s.image + '-1280.webp 1280w'"
+               sizes="(min-width: 900px) 560px, 100vw" width="640" height="360" [alt]="s.alt" loading="lazy" />
+          <div class="subject-body">
+            <span class="kicker">Grade 12</span>
+            <h3>{{ s.name }}</h3>
+            <p>{{ s.text }}</p>
+            <p class="schedule"><app-icon name="clock" [size]="18" /> {{ s.schedule }}</p>
+          </div>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section pricing" id="pricing">
+  <div class="container">
+    <span class="eyebrow">{{ pricing.eyebrow }}</span>
+    <h2>{{ pricing.title }}</h2>
+    <p class="lead">{{ fill(pricing.intro) }}</p>
+    <div class="plans">
+      @for (p of pricing.plans; track p.name) {
+        <article class="plan" [class.featured]="p.featured">
+          @if (p.featured) { <span class="badge">Most popular</span> }
+          <h3>{{ p.name }}</h3>
+          <p class="price">
+            <span class="amount">R{{ p.price }}</span><span class="per">/month</span>
+          </p>
+          <p class="standard">Standard price R{{ p.standard }}/month</p>
+          <ul class="checklist">
+            @for (f of p.features; track f) {
+              <li><app-icon name="check" [size]="18" /> {{ f }}</li>
+            }
+          </ul>
+          <a routerLink="/diagnostic" class="btn" [class.btn-gold]="p.featured" [class.btn-navy]="!p.featured">
+            Start with the diagnostic
+          </a>
+        </article>
+      }
+    </div>
+    <p class="fee-note">{{ fill(pricing.feeNote) }}</p>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section about" id="about">
+  <div class="container two-col about-grid">
+    <div class="about-photo">
+      @if (site.tutor.photo) {
+        <img [src]="site.tutor.photo" width="480" height="600" [alt]="site.tutor.name" loading="lazy" />
+      } @else {
+        <img src="img/online-learner-960.webp"
+             srcset="img/online-learner-480.webp 480w, img/online-learner-960.webp 960w"
+             sizes="(min-width: 900px) 480px, 100vw" width="480" height="720"
+             alt="A learner taking notes during a live online class" loading="lazy" />
+      }
+    </div>
+    <div>
+      <span class="eyebrow">{{ about.eyebrow }}</span>
+      <h2>{{ about.title }}</h2>
+      @for (p of about.paragraphs; track $index) {
+        <p class="lead">{{ fill(p) }}</p>
+      }
+      <a routerLink="/diagnostic" class="btn btn-navy">Take the free diagnostic</a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section faq" id="faq">
+  <div class="container narrow">
+    <span class="eyebrow">Questions parents ask</span>
+    <h2>FAQ</h2>
+    <div class="faq-list">
+      @for (f of faqs; track f.q) {
+        <details>
+          <summary>{{ f.q }}</summary>
+          <p>{{ fill(f.a) }}</p>
+        </details>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final">
+  <div class="container final-inner">
+    <h2>{{ finalCta.title }}</h2>
+    <p>{{ finalCta.text }}</p>
+    <a routerLink="/diagnostic" class="btn btn-gold">
+      {{ finalCta.cta }} <app-icon name="arrow" [size]="18" />
+    </a>
+  </div>
+</section>
