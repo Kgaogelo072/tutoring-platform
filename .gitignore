@@ -60,3 +60,10 @@ logs/
 # OS / editor extras
 desktop.ini
 *.swp
+
+# .NET
+bin/
+obj/
+*.user
+TestResults/
+mail-pickup/
