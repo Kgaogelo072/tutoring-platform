@@ -1,6 +1,7 @@
 # Engineered Tutors — web
 
 Landing page, privacy policy and (soon) the registration + diagnostic flow for Engineered Tutors.
+Phase 1 scope is defined in the Diagnostic MVP Requirements v1.2.
 Angular 21 with SSR and prerendering.
 
 ## Run locally
@@ -41,6 +42,6 @@ Angular 21 runs on Node 22.22.0+. Angular 22 needs Node 22.22.3+ or 24.15+.
 ## Next (Phase 1)
 
 1. ASP.NET Core API: registration, attempts, scoring, question import.
-2. Registration form on `/diagnostic` (REG-01 to REG-08).
-3. Test-taking UI at `/d/:token` with KaTeX (DX-01 to DX-13).
+2. Registration form on `/diagnostic` (REG-01 to REG-09), including the optional learner ID number.
+3. Test-taking UI at `/d/:token` with KaTeX, multiple-choice and numeric answers (DX-01 to DX-13).
 4. Admin area.

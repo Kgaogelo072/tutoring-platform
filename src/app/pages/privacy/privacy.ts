@@ -24,15 +24,16 @@ import { site } from '../../content/site-content';
         <h2>What we collect</h2>
         <ul>
           <li><strong>Parent or guardian:</strong> name, cellphone number, email address, and how you heard about us.</li>
-          <li><strong>Learner:</strong> name, school, grade, subjects, recent marks and goals.</li>
-          <li><strong>Assessment data:</strong> diagnostic and test answers, scores by topic, time taken, and photos of
-            written working uploaded during a test.</li>
+          <li><strong>Learner:</strong> name, school, grade, subjects, recent marks and goals, and, if you choose to give it, the learner's ID number (or passport number).</li>
+          <li><strong>Assessment data:</strong> diagnostic and test answers, scores by topic, and time taken.</li>
           <li><strong>Consent record:</strong> when consent was given, the version of this policy, and the IP address used.</li>
         </ul>
 
         <h2>Why we collect it</h2>
         <ul>
           <li>To run the diagnostic and prepare a report for the parent.</li>
+          <li>To identify each learner correctly, so their results are never mixed up with another learner's and they
+            are not registered twice. This is the only reason we ask for an ID number, and giving it is optional.</li>
           <li>To contact the parent about the report and our programme.</li>
           <li>For enrolled learners: to run classes, track progress and send progress reports.</li>
           <li>To process registration fees and monthly payments.</li>
@@ -66,8 +67,9 @@ import { site } from '../../content/site-content';
 
         <h2>Security</h2>
         <p>
-          Information is stored in encrypted databases hosted in South Africa. Uploaded work is kept in private
-          storage, and only the tutor can access learner results.
+          Information is stored in encrypted databases hosted in South Africa, and only the tutor can access learner
+          results. ID numbers are encrypted separately, are never included in emails or links, and are shown only in
+          masked form (the last four digits).
         </p>
 
         <h2>Contact</h2>
@@ -87,7 +89,7 @@ import { site } from '../../content/site-content';
   `,
 })
 export class Privacy {
-  static readonly version = '0.1-draft';
+  static readonly version = '0.3-draft';
   version = Privacy.version;
   updated = 'October 2026';
   site = site;

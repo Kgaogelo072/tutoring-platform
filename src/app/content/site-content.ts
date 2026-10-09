@@ -55,7 +55,7 @@ export const problem = {
 export const steps = [
   {
     title: 'Take the free diagnostic',
-    text: 'A 45-minute online test per subject, done on a phone or laptop. It covers the Grade 10–11 work Grade 12 builds on.',
+    text: 'A 40–45-minute online test per subject, done on a phone or laptop, with multiple-choice and number answers. It covers the Grade 10–11 work Grade 12 builds on.',
   },
   {
     title: 'Get a personal report',
@@ -162,7 +162,7 @@ export const faqs = [
 
 export const finalCta = {
   title: 'Find the gaps before Grade 12 does.',
-  text: 'The diagnostic takes about 45 minutes per subject. Your report arrives within 48 hours.',
+  text: 'The diagnostic takes 40–45 minutes per subject. Your report arrives within 48 hours.',
   cta: 'Take the free diagnostic',
 };
 

@@ -18,7 +18,7 @@ import { WhatsappIcon } from '../../shared/icon';
         <span class="eyebrow">Matric Readiness Diagnostic</span>
         <h1>The free diagnostic opens on {{ site.diagnosticOpens }}.</h1>
         <p class="lead">
-          It's a 45-minute online test per subject, built on the Grade 10–11 work that Grade 12 depends on.
+          It's a 40–45-minute online test per subject, with multiple-choice and number answers, built on the Grade 10–11 work that Grade 12 depends on.
           Parents receive a one-page report within 48 hours showing strong topics, developing topics and the priority gaps.
         </p>
         <div class="card">
