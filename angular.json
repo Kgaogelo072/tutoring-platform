@@ -49,6 +49,16 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "katex.min.css",
+                "input": "node_modules/katex/dist",
+                "output": "katex"
+              },
+              {
+                "glob": "fonts/*.woff2",
+                "input": "node_modules/katex/dist",
+                "output": "katex"
               }
             ],
             "styles": [
@@ -105,7 +115,10 @@
               "buildTarget": "engineered-tutors-web:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          }
         }
       }
     }

@@ -83,7 +83,8 @@ builder.Services.Configure<ForwardedHeadersOptions>(o =>
 
 var origins = config.GetSection("Cors:Origins").Get<string[]>() ?? [];
 builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
-    p.WithOrigins(origins).AllowAnyHeader().WithMethods("GET", "POST", "PUT", "PATCH")));
+    p.WithOrigins(origins).AllowAnyHeader().WithMethods("GET", "POST", "PUT", "PATCH")
+        .WithExposedHeaders("Content-Disposition")));
 
 var app = builder.Build();
 

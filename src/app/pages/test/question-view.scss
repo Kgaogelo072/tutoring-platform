@@ -1,0 +1,42 @@
+:host { display: block; }
+
+.q-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 14px; }
+.q-num { font-weight: 700; color: var(--navy); }
+.q-marks { color: var(--muted); font-size: 0.9rem; }
+
+.stem { font-size: 1.12rem; line-height: 1.7; margin-bottom: 18px; color: var(--text); }
+.figure { max-width: 100%; height: auto; margin: 0 auto 18px; border-radius: 10px; border: 1px solid var(--line); background: #fff; }
+
+.options { display: grid; gap: 10px; }
+.option {
+  display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 10px 14px;
+  border: 2px solid #d5dae3; border-radius: 12px; background: #fff; cursor: pointer;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+.option:hover { border-color: #9aa6ba; }
+.option.selected { border-color: var(--navy); background: #eef2fa; }
+.option:focus-within { outline: 3px solid var(--gold-2); outline-offset: 2px; }
+.option input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.letter {
+  flex: none; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center;
+  font-weight: 700; color: var(--navy); border: 2px solid currentColor; font-size: 0.9rem;
+}
+.option.selected .letter { background: var(--navy); color: #fff; border-color: var(--navy); }
+.text { flex: 1; min-width: 0; font-size: 1.05rem; }
+
+.num-row {
+  display: flex; align-items: stretch; border: 2px solid #cfd5df; border-radius: 12px; overflow: hidden; background: #fff;
+  max-width: 360px;
+}
+.num-row:focus-within { border-color: var(--navy); outline: 3px solid var(--gold-2); outline-offset: 1px; }
+.num-row.invalid { border-color: #c62828; }
+.num-row input {
+  flex: 1; min-width: 0; border: 0; padding: 12px 14px; font: inherit; font-size: 1.3rem; min-height: 56px; outline: none;
+}
+.sign {
+  flex: none; width: 52px; border: 0; border-right: 1px solid #e3e7ee; background: #f5f7fb;
+  font-size: 1.3rem; font-weight: 700; color: var(--navy); cursor: pointer;
+}
+.unit { display: flex; align-items: center; padding: 0 16px; background: #f5f7fb; border-left: 1px solid #e3e7ee; font-weight: 600; color: var(--navy); }
+.num-help { color: var(--muted); font-size: 0.9rem; margin: 8px 0 0; }
+.num-error { color: #b42318; font-weight: 600; font-size: 0.92rem; margin: 8px 0 0; }
