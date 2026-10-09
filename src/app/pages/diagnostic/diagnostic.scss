@@ -11,7 +11,8 @@ h1 { font-size: clamp(2rem, 5vw, 3rem); }
 
 fieldset { border: 1px solid var(--line); }
 legend { float: left; width: 100%; padding: 0; margin-bottom: 16px; }
-legend + * { clear: both; }
+// Everything after the floated legend starts below it, including when a Remove button comes first.
+legend ~ * { clear: both; }
 
 .grid-2 { display: grid; gap: 0 16px; }
 @media (min-width: 640px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
