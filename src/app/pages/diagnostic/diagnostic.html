@@ -1,0 +1,235 @@
+<section class="section">
+  <div class="container narrow">
+    @if (result(); as r) {
+      <!-- REG-08: confirmation with test links -->
+      <div class="done" role="status">
+        <span class="eyebrow">Registration received</span>
+        <h1>You're all set.</h1>
+        <p class="lead">{{ r.message }}</p>
+
+        @if (r.links.length) {
+          @for (l of r.links; track $index) {
+            <div class="card links">
+              <h2>{{ l.firstName }}'s tests</h2>
+              <ul>
+                @for (t of l.tests; track t.subject) {
+                  <li>
+                    <a class="btn btn-gold" [routerLink]="testPath(t.url)">Start {{ subjectNames[t.subject] }}</a>
+                    <span class="muted">{{ t.minutes }} minutes</span>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+          <p class="muted small">
+            Each link is personal to one learner and one subject. The timer starts only when the learner taps
+            <strong>Start</strong>, so you can also open the link from the email later. Links expire after 30 days.
+          </p>
+        }
+
+        <div class="card">
+          <h2>What happens next</h2>
+          <ol class="next">
+            <li>The learner takes each test on a phone, tablet or laptop, with paper and a pen ready.</li>
+            <li>We review the results and send you a short report on the topics that need attention, usually within 48 hours.</li>
+            <li>Then we can talk about a plan for Grade 12.</li>
+          </ol>
+          <a class="btn btn-wa" [href]="wa" target="_blank" rel="noopener">
+            <app-whatsapp-icon [size]="22" /> Questions? WhatsApp us
+          </a>
+        </div>
+      </div>
+    } @else {
+      <span class="eyebrow">Matric Readiness Diagnostic</span>
+      <h1>Register for the free diagnostic.</h1>
+      <p class="lead">
+        It's a 40–45-minute online test per subject, with multiple-choice and number answers, built on the Grade 10–11
+        work that Grade 12 depends on. Parents receive a one-page report within 48 hours showing strong topics,
+        developing topics and the priority gaps.
+      </p>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate #formTop>
+        @if (formError()) {
+          <div class="alert" role="alert">{{ formError() }}</div>
+        }
+
+        <!-- Parent (REG-01) -->
+        <fieldset class="card" formGroupName="parent">
+          <legend><h2>Parent or guardian</h2></legend>
+
+          <div class="field">
+            <label for="p-name">Full name</label>
+            <input id="p-name" formControlName="fullName" autocomplete="name" [attr.aria-invalid]="!!error('parent.fullName')" />
+            @if (error('parent.fullName'); as e) { <p class="field-error">{{ e }}</p> }
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label for="p-phone">Mobile number</label>
+              <input id="p-phone" formControlName="phone" type="tel" inputmode="tel" autocomplete="tel"
+                     placeholder="082 123 4567" [attr.aria-invalid]="!!error('parent.phone')" />
+              @if (error('parent.phone'); as e) { <p class="field-error">{{ e }}</p> }
+            </div>
+            <div class="field">
+              <label for="p-email">Email</label>
+              <input id="p-email" formControlName="email" type="email" inputmode="email" autocomplete="email"
+                     [attr.aria-invalid]="!!error('parent.email')" />
+              @if (error('parent.email'); as e) { <p class="field-error">{{ e }}</p> }
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="p-source">How did you hear about us?</label>
+            <select id="p-source" formControlName="source" [attr.aria-invalid]="!!error('parent.source')">
+              <option value="" disabled>Choose one</option>
+              @for (s of options().sources; track s) { <option [value]="s">{{ s }}</option> }
+            </select>
+            @if (error('parent.source'); as e) { <p class="field-error">{{ e }}</p> }
+          </div>
+        </fieldset>
+
+        <!-- Learners (REG-02, REG-03) -->
+        <div formArrayName="learners">
+          @for (g of learners.controls; track g; let i = $index) {
+            <fieldset class="card" [formGroupName]="i">
+              <legend>
+                <h2>{{ learners.length > 1 ? 'Learner ' + (i + 1) : 'Learner' }}</h2>
+              </legend>
+              @if (learners.length > 1) {
+                <button type="button" class="link remove" (click)="removeLearner(i)">Remove</button>
+              }
+
+              <div class="grid-2">
+                <div class="field">
+                  <label [for]="'l-first-' + i">First name</label>
+                  <input [id]="'l-first-' + i" formControlName="firstName" autocomplete="off"
+                         [attr.aria-invalid]="!!error('learners[' + i + '].firstName')" />
+                  @if (error('learners[' + i + '].firstName'); as e) { <p class="field-error">{{ e }}</p> }
+                </div>
+                <div class="field">
+                  <label [for]="'l-surname-' + i">Surname</label>
+                  <input [id]="'l-surname-' + i" formControlName="surname" autocomplete="off"
+                         [attr.aria-invalid]="!!error('learners[' + i + '].surname')" />
+                  @if (error('learners[' + i + '].surname'); as e) { <p class="field-error">{{ e }}</p> }
+                </div>
+              </div>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label [for]="'l-school-' + i">School</label>
+                  <input [id]="'l-school-' + i" formControlName="school" autocomplete="off"
+                         [attr.aria-invalid]="!!error('learners[' + i + '].school')" />
+                  @if (error('learners[' + i + '].school'); as e) { <p class="field-error">{{ e }}</p> }
+                </div>
+                <div class="field">
+                  <label [for]="'l-grade-' + i">Current grade</label>
+                  <select [id]="'l-grade-' + i" formControlName="grade" [attr.aria-invalid]="!!error('learners[' + i + '].grade')">
+                    <option [ngValue]="null" disabled>Choose a grade</option>
+                    @for (gr of grades; track gr) { <option [ngValue]="gr">Grade {{ gr }}</option> }
+                  </select>
+                  @if (error('learners[' + i + '].grade'); as e) { <p class="field-error">{{ e }}</p> }
+                </div>
+              </div>
+
+              <div class="field">
+                <span class="label" [id]="'l-subj-' + i">Subjects to test</span>
+                <div class="subjects" role="group" [attr.aria-labelledby]="'l-subj-' + i">
+                  @for (s of subjects; track s) {
+                    @let ctrlName = s === 'Maths' ? 'maths' : 'physics';
+                    @let markName = s === 'Maths' ? 'mathsMark' : 'physicsMark';
+                    <div class="subject" [class.on]="g.get(ctrlName)?.value">
+                      <label class="check">
+                        <input type="checkbox" [formControlName]="ctrlName" />
+                        <span>
+                          {{ subjectNames[s] }}
+                          @if (subjectsAvailable()[s]; as info) {
+                            <small class="muted">
+                              {{ info.available ? info.minutes + ' minutes' : 'Opening soon' }}
+                            </small>
+                          }
+                        </span>
+                      </label>
+                      @if (g.get(ctrlName)?.value) {
+                        <div class="mark">
+                          <label [for]="'l-' + markName + '-' + i">Latest mark (%) <span class="muted">optional</span></label>
+                          <input [id]="'l-' + markName + '-' + i" [formControl]="control(g, markName)" inputmode="numeric"
+                                 maxlength="3" placeholder="e.g. 58" />
+                          @if (error('learners[' + i + '].' + markName); as e) { <p class="field-error">{{ e }}</p> }
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+                @if (learnerError(i, 'subjects'); as e) { <p class="field-error">{{ e }}</p> }
+              </div>
+
+              <div class="field">
+                <label [for]="'l-goal-' + i">Goal</label>
+                <select [id]="'l-goal-' + i" formControlName="goal" [attr.aria-invalid]="!!error('learners[' + i + '].goal')">
+                  <option value="" disabled>Choose a goal</option>
+                  @for (o of options().goals; track o) { <option [value]="o">{{ o }}</option> }
+                </select>
+                @if (error('learners[' + i + '].goal'); as e) { <p class="field-error">{{ e }}</p> }
+              </div>
+
+              <!-- REG-02 / REG-09: optional ID number -->
+              <div class="field">
+                <label [for]="'l-id-' + i">Learner ID number (optional)</label>
+                <p class="help" [id]="'l-id-help-' + i">Helps us keep each learner's results separate. You can leave it blank.</p>
+                <div class="id-row">
+                  <select formControlName="idType" aria-label="ID type" class="id-type">
+                    <option value="SA_ID">SA ID</option>
+                    <option value="PASSPORT">Passport</option>
+                  </select>
+                  <input [id]="'l-id-' + i" formControlName="idNumber" autocomplete="off"
+                         [attr.inputmode]="g.controls.idType.value === 'SA_ID' ? 'numeric' : 'text'"
+                         [attr.aria-describedby]="'l-id-help-' + i" [attr.aria-invalid]="!!learnerError(i, 'idNumber')" />
+                </div>
+                @if (learnerError(i, 'idNumber'); as e) { <p class="field-error">{{ e }}</p> }
+              </div>
+            </fieldset>
+          }
+        </div>
+
+        @if (learners.length < options().maxLearners) {
+          <button type="button" class="btn btn-outline add" (click)="addLearner()">+ Add another learner</button>
+        }
+
+        <!-- REG-04: required checkboxes -->
+        <div class="card consent">
+          <label class="check">
+            <input type="checkbox" formControlName="isGuardianOver18" />
+            <span>I am the parent or legal guardian and over 18.</span>
+          </label>
+          @if (error('isGuardianOver18'); as e) { <p class="field-error">{{ e }}</p> }
+
+          <label class="check">
+            <input type="checkbox" formControlName="consentAccepted" />
+            <span>
+              I consent to Engineered Tutors collecting and using my information and my child's information, including
+              test answers and results, as described in the <a routerLink="/privacy" target="_blank">privacy policy</a>.
+            </span>
+          </label>
+          @if (error('consentAccepted'); as e) { <p class="field-error">{{ e }}</p> }
+
+          <!-- Honeypot (REG-06): hidden from people and screen readers -->
+          <div class="hp" aria-hidden="true">
+            <label for="website">Website</label>
+            <input id="website" formControlName="website" tabindex="-1" autocomplete="off" />
+          </div>
+
+          @if (turnstileSiteKey) {
+            <app-turnstile [siteKey]="turnstileSiteKey" (token)="turnstileToken.set($event)" />
+          }
+        </div>
+
+        <button type="submit" class="btn btn-gold submit" [disabled]="submitting()">
+          {{ submitting() ? 'Registering…' : 'Register and get the test links' }}
+        </button>
+        <p class="muted small">We'll show the test links on the next screen and email them to you.</p>
+      </form>
+
+      <p><a routerLink="/">← Back to home</a></p>
+    }
+  </div>
+</section>

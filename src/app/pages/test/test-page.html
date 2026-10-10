@@ -1,0 +1,191 @@
+@switch (phase()) {
+  @case ('loading') {
+    <div class="center"><p class="muted" role="status">Loading your test…</p></div>
+  }
+
+  @case ('error') {
+    <div class="panel">
+      <h1>{{ error()?.code === 'expired' ? 'This link has expired' : error()?.code === 'offline' ? "You're offline" : "We can't open this test" }}</h1>
+      <p>{{ error()?.message }}</p>
+      @if (error()?.code === 'offline') {
+        <button class="btn btn-navy" type="button" (click)="retry()">Try again</button>
+      } @else {
+        <a class="btn btn-wa" [href]="wa" target="_blank" rel="noopener">WhatsApp us for help</a>
+      }
+    </div>
+  }
+
+  <!-- DX-02: instructions; the timer starts only on Start -->
+  @case ('instructions') {
+    @let s = state()!;
+    <div class="panel">
+      <span class="eyebrow">{{ s.subjectName }} diagnostic</span>
+      <h1>Hi {{ s.learnerFirstName }}, ready when you are.</h1>
+
+      <ul class="facts">
+        <li><strong>{{ s.timeLimitMinutes }} minutes</strong><span>time limit</span></li>
+        <li><strong>{{ s.questionCount }}</strong><span>questions</span></li>
+      </ul>
+
+      <h2>Before you start</h2>
+      <ul class="rules">
+        <li>Have <strong>paper and a pen</strong> ready for working out.</li>
+        <li>
+          @if (s.calculatorAllowed) {
+            You may use a scientific calculator.
+          } @else {
+            <strong>No calculator.</strong> You won't need one.
+          }
+        </li>
+        <li>One question per screen. Use <strong>Next</strong> and <strong>Previous</strong>, or the question grid, to move around. You can flag a question to come back to it.</li>
+        <li>Each answer saves as soon as you choose it. If the page closes, open the link again to carry on.</li>
+        <li>The timer starts when you tap <strong>Start</strong> and <strong>can't be paused</strong>. When time runs out, your answers are submitted automatically.</li>
+      </ul>
+
+      @if (s.numericQuestionCount > 0) {
+        <h2>Number answers</h2>
+        <p>
+          {{ s.numericQuestionCount }} of the questions need a number instead of a choice. Type <strong>only the number</strong>.
+          The unit, if there is one, is shown next to the box.
+        </p>
+        <ul class="examples">
+          <li><code>5,05</code> or <code>5.05</code> for decimals</li>
+          <li><code>-4</code> for negative numbers (tap <strong>±</strong> if your keyboard has no minus)</li>
+          <li>Not <code>5.05 m</code> or <code>x = 3</code></li>
+        </ul>
+      }
+
+      <button class="btn btn-gold start" type="button" (click)="start()" [disabled]="starting()">
+        {{ starting() ? 'Starting…' : 'Start the ' + s.timeLimitMinutes + '-minute test' }}
+      </button>
+    </div>
+  }
+
+  @case ('test') {
+    @let s = state()!;
+    <!-- Sticky bar: subject, save state and the countdown (display only, DX-07) -->
+    <header class="bar">
+      <span class="bar-subject">{{ s.subjectName }}</span>
+      <span class="save" aria-live="polite">
+        @switch (currentSave()) {
+          @case ('saving') { Saving… }
+          @case ('saved') { Saved ✓ }
+          @case ('error') { <span class="warn">Not saved</span> }
+        }
+      </span>
+      <span class="timer" [class.low]="lowTime()" role="timer" [attr.aria-label]="'Time left ' + countdown()">
+        {{ countdown() }}
+      </span>
+    </header>
+
+    @if (unsaved()) {
+      <div class="banner" role="alert">
+        Some answers haven't saved. Check your connection.
+        <button type="button" class="link" (click)="retryFailedSaves()">Try again</button>
+      </div>
+    }
+    @if (error() && !confirming()) {
+      <div class="banner" role="alert">{{ error()?.message }}</div>
+    }
+
+    <div class="test">
+      @for (q of [current()]; track q?.id) {
+        @if (q) {
+          <article class="card">
+            <app-question-view
+              [question]="q"
+              [total]="questions().length"
+              [selected]="answers()[q.id]?.selectedOptionId ?? null"
+              [raw]="answers()[q.id]?.numericRaw ?? ''"
+              (optionSelected)="selectOption(q, $event)"
+              (numericInput)="numericInput(q, $event)"
+              (numericBlur)="flushNumeric(q.id)" />
+
+            <button type="button" class="flag" [class.on]="flagged().has(q.id)" (click)="toggleFlag(q)"
+                    [attr.aria-pressed]="flagged().has(q.id)">
+              ⚑ {{ flagged().has(q.id) ? 'Flagged for review' : 'Flag for review' }}
+            </button>
+          </article>
+        }
+      }
+
+      <nav class="pager" aria-label="Question navigation">
+        <button type="button" class="btn btn-outline" (click)="go(index() - 1)" [disabled]="index() === 0">← Previous</button>
+        <button type="button" class="btn btn-outline grid-toggle" (click)="navOpen.set(!navOpen())"
+                [attr.aria-expanded]="navOpen()" aria-controls="navigator">
+          {{ index() + 1 }} / {{ questions().length }}
+        </button>
+        @if (index() < questions().length - 1) {
+          <button type="button" class="btn btn-navy" (click)="go(index() + 1)">Next →</button>
+        } @else {
+          <button type="button" class="btn btn-gold" (click)="review()">Finish</button>
+        }
+      </nav>
+
+      <!-- DX-03: navigator grid -->
+      <section id="navigator" class="navigator" [class.open]="navOpen()" aria-label="All questions">
+        <div class="grid">
+          @for (q of questions(); track q.id; let i = $index) {
+            <button type="button" class="cell"
+                    [class.answered]="answeredIds().has(q.id)"
+                    [class.flagged]="flagged().has(q.id)"
+                    [class.current]="i === index()"
+                    [attr.aria-label]="statusOf(q)"
+                    [attr.aria-current]="i === index() ? 'step' : null"
+                    (click)="go(i)">{{ q.number }}</button>
+          }
+        </div>
+        <p class="legend">
+          <span><i class="dot answered"></i> Answered</span>
+          <span><i class="dot"></i> Not answered</span>
+          <span><i class="dot flagged"></i> Flagged</span>
+        </p>
+        <button type="button" class="btn btn-gold review" (click)="review()">Review and submit</button>
+      </section>
+    </div>
+
+    <!-- DX-10: confirm before a manual submit -->
+    @if (confirming()) {
+      <div class="overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+        <div class="dialog">
+          <h2 id="confirm-title">Submit your test?</h2>
+          @if (unanswered().length) {
+            <p>
+              You haven't answered {{ unanswered().length === 1 ? 'question' : unanswered().length + ' questions' }}:
+              <strong>{{ unanswered().join(', ') }}</strong>.
+            </p>
+          } @else {
+            <p>You've answered every question.</p>
+          }
+          @if (flaggedNumbers().length) {
+            <p>Flagged for review: <strong>{{ flaggedNumbers().join(', ') }}</strong>.</p>
+          }
+          <p class="muted">Once submitted, you can't change your answers.</p>
+          @if (error()) { <p class="warn" role="alert">{{ error()?.message }}</p> }
+          <div class="actions">
+            <button type="button" class="btn btn-outline" (click)="confirming.set(false)" [disabled]="submitting()">Keep working</button>
+            <button type="button" class="btn btn-gold" (click)="finish(false)" [disabled]="submitting()">
+              {{ submitting() ? 'Submitting…' : 'Submit now' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  }
+
+  <!-- DX-12: thank-you screen. Learners don't see scores; the report comes from the tutor. -->
+  @case ('done') {
+    <div class="panel done">
+      <div class="tick" aria-hidden="true">✓</div>
+      <h1>{{ timeUp() ? "Time's up, " : 'Thank you, ' }}{{ state()?.learnerFirstName }}!</h1>
+      <p class="lead">
+        Your {{ state()?.subjectName }} answers have been submitted{{ timeUp() ? ' automatically' : '' }}.
+      </p>
+      <p>
+        We'll look through your answers and send your parent a short report on what you're doing well and what to work
+        on, usually within 48 hours. You can close this page now.
+      </p>
+      <p class="muted small">If you have another subject to do, use the other link in the email.</p>
+    </div>
+  }
+}

@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /d/
+Disallow: /admin
 
 Sitemap: https://www.engineeredtutors.co.za/sitemap.xml
