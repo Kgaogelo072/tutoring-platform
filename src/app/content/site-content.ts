@@ -10,7 +10,7 @@ export const site = {
   domain: 'https://www.engineeredtutors.co.za', // TODO: confirm domain
   email: 'hello@engineeredtutors.co.za', // TODO: confirm mailbox
   /** International format, digits only, e.g. 27821234567 */
-  whatsappNumber: '27000000000', // TODO: your WhatsApp Business number
+  whatsappNumber: '0732831206', // TODO: your WhatsApp Business number
   whatsappMessage: "Hi! I'd like to know more about the 2027 Matric Accelerator.",
   diagnosticOpens: '8 November 2026',
   foundingDeadline: '15 December 2026',

@@ -39,6 +39,12 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
         @case ('close') {
           <path d="M6 6l12 12M18 6 6 18" />
         }
+        @case ('bookmark') {
+          <path d="M6 3.5h12v17l-6-4.5-6 4.5z" />
+        }
+        @case ('award') {
+          <circle cx="12" cy="9" r="6" /><path d="m8.5 14 -1.5 7 5-3 5 3-1.5-7" />
+        }
       }
     </svg>
   `,

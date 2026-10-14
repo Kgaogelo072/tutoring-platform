@@ -14,7 +14,10 @@ import { QuestionDto } from './attempt.service';
     @let q = question();
     <div class="q-head">
       <span class="q-num">Question {{ q.number }} of {{ total() }}</span>
-      <span class="q-marks">{{ q.marks }} {{ q.marks === 1 ? 'mark' : 'marks' }}</span>
+      <span class="q-side">
+        <ng-content select="[qActions]" />
+        <span class="q-marks">{{ q.marks }} {{ q.marks === 1 ? 'mark' : 'marks' }}</span>
+      </span>
     </div>
 
     <div class="stem" [id]="'stem-' + q.id"><app-math [text]="q.stemLatex" /></div>

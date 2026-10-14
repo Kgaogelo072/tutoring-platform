@@ -1,7 +1,8 @@
 :host { display: block; }
 
-.q-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 14px; }
+.q-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
 .q-num { font-weight: 700; color: var(--navy); }
+.q-side { display: inline-flex; align-items: center; gap: 10px; flex: none; }
 .q-marks { color: var(--muted); font-size: 0.9rem; }
 
 .stem { font-size: 1.12rem; line-height: 1.7; margin-bottom: 18px; color: var(--text); }
